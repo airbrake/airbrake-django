@@ -1,0 +1,17 @@
+## Overview
+
+When I went to implement [Airbrake](http://airbrake.io) in [Sprint.ly](http://sprint.ly) I found two projects that looked like they might do the trick: [django-airbrake](https://bitbucket.org/greghball/django-airbrake), which was forked from the dormant [django-hoptoad](https://bitbucket.org/sjl/django-hoptoad/) and [Pytoad](https://github.com/attachmentsme/Pytoad) which wasn't made for Django. In the end, I decided to use bits and pieces of the two as the older `django-airbrake` wasn't working with the newer API and Pytoad didn't have any Django sugar.
+
+## Configuration
+
+In your `settings.py` file you're going to want to create a dictionary called `AIRBRAKE`. This dictionary will allow you to control how the Airbrake integration will work with your application.
+
+    AIRBRAKE = {
+        'API_KEY': 'your_api_key_here',
+        'USE_SSL': True,
+        'TIMEOUT': 5,
+        'ENVIRONMENT': 'unique_name_for_environment',
+    }
+
+
+Once you've setup your Airbrake settings you just need to add `airbrake` to your `INSTALLED_APPS` and restart your server. If your code is as poorly written as mine, the errors will start flowing into Airbrake shortly.

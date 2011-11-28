@@ -1,8 +1,11 @@
-from decorator import decorator
-from multiprocessing import Process
+def airbrake(f):
+    def __inner__(*args, **kwargs):
+        try:
+            f(*args, **kwargs)
+        except Exception, e:
+            from airbrake.utils.client import Client
+            c = Client()
+            c.notify(exception=e)
+            raise e
 
-
-@decorator
-def async(f, *args, **kwargs):
-    p = Process(target=f, args=args, kwargs=kwargs)
-    p.start()
+    return __inner__

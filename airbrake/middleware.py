@@ -6,4 +6,4 @@ class AirbrakeNotifierMiddleware(object):
         self.client = Client()
 
     def process_exception(self, request, exception):
-        self.client.send(request, exception)         
+        self.client.notify(exception=exception, request=request)
