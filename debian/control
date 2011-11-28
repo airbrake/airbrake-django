@@ -1,0 +1,12 @@
+Source: python-django-airbrake
+Section: python
+Priority: extra
+Maintainer: Chris Lea <chl@chrislea.com>
+Build-Depends: cdbs, debhelper (>= 6), python (>= 2.5), python-support, python-setuptools
+Standards-Version: 3.8.3
+Homepage: https://github.com/joestump/django-airbrake/
+
+Package: python-django-airbrake
+Architecture: all
+Depends: ${shlibs:Depends}, ${misc:Depends}, python (>= 2.5), python-django (>= 1.2.0), python-decorator
+Description: Django application for integrating Airbrake.io into Django.
