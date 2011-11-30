@@ -1,3 +1,9 @@
+python-django-airbrake (0.0.1-1sprintly1~lucid1) lucid; urgency=low
+
+  * Package for Sprintly 
+
+ -- Sprintly <ops@sprint.ly>  Tue, 29 Nov 2011 18:22:41 -0800
+
 python-django-airbrake (0.0.1) unstable; urgency=low
 
   * Initial packaging
