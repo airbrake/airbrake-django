@@ -44,10 +44,18 @@ class Client(object):
         }
 
         payload = self._generate_xml(exception=exception, request=request)
+        print "PAYLOAD"
+        print payload
         req = urllib2.Request(self.url, payload, headers)
-        resp = urllib2.urlopen(req, timeout=self.settings['TIMEOUT'])
+        print "REQUEST"
+        try:
+            resp = urllib2.urlopen(req, timeout=self.settings['TIMEOUT'])
+        except:
+            print sys.exc_info()[0]
+            print traceback.print_exc(file=sys.stdout)
+            
+        print "RESPONSE"
         status = resp.getcode()
-
         if status == 200:
             return True
         elif status in Client.ERRORS:
@@ -67,16 +75,16 @@ class Client(object):
             tb_dict['line_number'] = tb[1]
             tb_dict['function_name'] = tb[2]
 
-        etree.SubElement(notice_em, 'api-key').text(self.settings['API_KEY'])
+        api_key = etree.SubElement(notice_em, 'api-key').text = self.settings['API_KEY']
 
-        notifier_em = etree.SubElement(notice, 'notifier')
+        notifier_em = etree.SubElement(notice_em, 'notifier')
 
-        etree.SubElement(notifier_em, 'name').text('django-airbrake')
-        etree.SubElement(notifier_em, 'version').text('0.0.2')
-        etree.SubElement(notifier_em, 'url').text('')
+        etree.SubElement(notifier_em, 'name').text = 'django-airbrake'
+        etree.SubElement(notifier_em, 'version').text = '0.0.2'
+        etree.SubElement(notifier_em, 'url').text = 'http://example.com'
 
         if request:
-            resquest_em = etree.SubElement(notice_em, 'request')
+            request_em = etree.SubElement(notice_em, 'request')
 
             if request.is_secure():
                 scheme = 'https'
@@ -84,35 +92,33 @@ class Client(object):
                 scheme = 'http'
             url = '%s://%s%s' % (scheme, request.get_host(),
                 request.get_full_path())
-            etree.SubElement(request_em, 'url').text(url)
+            etree.SubElement(request_em, 'url').text = str(url)
 
             cb,_,_ = resolve(request.path)
-            etree.SubElement(request_em, 'component').text(cb.__module__)
-            etree.SubElement(request_em, 'action').text(cb.__name__)
+            etree.SubElement(request_em, 'component').text = str(cb.__module__)
+            etree.SubElement(request_em, 'action').text = str(cb.__name__)
 
             if len(request.POST):
                 params_em = etree.SubElement(request_em, 'params')
 
                 for key, val in request.POST.items():
-                    etree.SubElement(params_em, 'var', key=key).text(val)
+                    var = etree.SubElement(params_em, 'var')
+                    var.set('key', str(key))
+                    var.text(str(val))
 
             session = request.session.items()
             if len(session):
                 session_em = etree.SubElement(request_em, 'session')
                 for key, val in session.items():
-                    etree.SubElement(session_em, 'var', key=key).text(val)
-
-            cgi_em = etree.SubElement(request_em, 'cgi-data')
-            for key, val in request.META.items():
-                etree.SubElement(cgi_em, 'var', key=key).text(val)
-
-            # xml << ('environment-name', self.settings['ENVIRONMENT'])
+                    var = etree.SubElement(session_em, 'var')
+                    var.set('key', str(key))
+                    var.text(str(val))
 
             if exception:
                 error_em = etree.SubElement(notice_em, 'error')
 
-                etree.SubElement(error_em, 'class').text(exception.__class__.__name__)
-                etree.SubElement(error_em, 'message').text(str(exception))
+                etree.SubElement(error_em, 'class').text = str(exception.__class__.__name__)
+                etree.SubElement(error_em, 'message').text = str(exception)
 
                 backtrace_em = etree.SubElement(error_em, 'backtrace')
 
@@ -121,4 +127,8 @@ class Client(object):
                     number=tb_dict.get('line_number', 'unknown'),
                     method=tb_dict.get('function_name', 'unknown'))
 
-        return etree.tostring(notice_em)
+        env_em = etree.SubElement(notice_em, 'server-environment')
+
+        etree.SubElement(env_em, 'environment-name').text = 'production'
+
+        return '<?xml version="1.0" encoding="UTF-8"?>%s' % etree.tostring(notice_em)
