@@ -1,10 +1,9 @@
 from django.conf import settings
-from django.contrib.sites.models import Site
 from django.core.urlresolvers import resolve
 import sys
 import urllib2
 import traceback
-from xmlbuilder import XMLBuilder
+from lxml import etree
 from airbrake.utils.decorators import async
 
 
@@ -56,66 +55,70 @@ class Client(object):
 
     def _generate_xml(self, exception=None, request=None):
         _,_,trace = sys.exc_info()
-        
-        xml = XMLBuilder()
-        
+
+        notice_em = etree.Element('notice', version='2.0')
+
         tb_dict = {}
         tb = traceback.extract_tb(trace)
-        
+
         if tb:
             tb = tb[0]
             tb_dict['filename'] = tb[0]
             tb_dict['line_number'] = tb[1]
             tb_dict['function_name'] = tb[2]
-        
-        site = Site.objects.get_current()
-        with xml.notice(version = 2.0):
-            xml << ('api-key', self.settings['API_KEY'])
-            with xml.notifier:
-                xml << ('name', site.name)
-                xml << ('version', '0.0.1')
-                xml << ('url', site.domain)
-            if request:
-                with xml.request:
-                    if request.is_secure():
-                        scheme = 'https'
-                    else:
-                        scheme = 'http'
-                    url = '%s://%s%s' % (scheme, request.get_host(),
-                        request.get_full_path())
-                    xml << ('url', url)
 
-                    cb,_,_ = resolve(request.path)
-                    xml << ('component', cb.__module__)
-                    xml << ('action', cb.__name__)
+        etree.SubElement(notice_em, 'api-key').text(self.settings['API_KEY'])
 
-                    if len(request.POST):
-                        with xml.params:
-                            for key, val in request.POST.items():
-                                xml << ('var', str(val), {'key': key})
+        notifier_em = etree.SubElement(notice, 'notifier')
 
-                    session = request.session.items()
-                    if len(session):
-                        with xml.session:
-                            for key, val in session.items():
-                                xml << ('var', str(val), {'key': key})
+        etree.SubElement(notifier_em, 'name').text('django-airbrake')
+        etree.SubElement(notifier_em, 'version').text('0.0.2')
+        etree.SubElement(notifier_em, 'url').text('')
 
-                    with xml('cgi-data'):
-                        for key, val in request.META.items():
-                            xml << ('var', str(val), {'key':key})
+        if request:
+            resquest_em = etree.SubElement(notice_em, 'request')
 
-            with xml('server-environment'):
-                xml << ('environment-name', self.settings['ENVIRONMENT'])
+            if request.is_secure():
+                scheme = 'https'
+            else:
+                scheme = 'http'
+            url = '%s://%s%s' % (scheme, request.get_host(),
+                request.get_full_path())
+            etree.SubElement(request_em, 'url').text(url)
+
+            cb,_,_ = resolve(request.path)
+            etree.SubElement(request_em, 'component').text(cb.__module__)
+            etree.SubElement(request_em, 'action').text(cb.__name__)
+
+            if len(request.POST):
+                params_em = etree.SubElement(request_em, 'params')
+
+                for key, val in request.POST.items():
+                    etree.SubElement(params_em, 'var', key=key).text(val)
+
+            session = request.session.items()
+            if len(session):
+                session_em = etree.SubElement(request_em, 'session')
+                for key, val in session.items():
+                    etree.SubElement(session_em, 'var', key=key).text(val)
+
+            cgi_em = etree.SubElement(request_em, 'cgi-data')
+                for key, val in request.META.items():
+                    etree.SubElement(cgi_em, 'var', key=key).text(val)
+
+            # xml << ('environment-name', self.settings['ENVIRONMENT'])
 
             if exception:
-                with xml.error:
-                    xml << ('class', exception.__class__.__name__)
-                    xml << ('message', str(exception))
-                    with xml.backtrace:
-                        xml << ('line', {
-                            'file':tb_dict.get('filename', 'unknown'),
-                            'number':tb_dict.get('line_number', 'unknown'),
-                            'method':tb_dict.get('function_name', 'unknown')
-                        })
+                error_em = etree.SubElement(notice_em, 'error')
 
-        return str(xml)
+                etree.SubElement(error_em, 'class').text(exception.__class__.__name__)
+                etree.SubElement(error_em, 'message').text(str(exception))
+
+                backtrace_em = etree.SubElement(error_em, 'backtrace')
+
+                etree.SubElement(backtrace_em, 'line',
+                    file=tb_dict.get('filename', 'unknown'),
+                    number=tb_dict.get('line_number', 'unknown'),
+                    method=tb_dict.get('function_name', 'unknown'))
+
+        return etree.tostring(notice_em)
