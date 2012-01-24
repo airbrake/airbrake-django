@@ -44,18 +44,10 @@ class Client(object):
         }
 
         payload = self._generate_xml(exception=exception, request=request)
-        print "PAYLOAD"
-        print payload
         req = urllib2.Request(self.url, payload, headers)
-        print "REQUEST"
-        try:
-            resp = urllib2.urlopen(req, timeout=self.settings['TIMEOUT'])
-        except:
-            print sys.exc_info()[0]
-            print traceback.print_exc(file=sys.stdout)
-            
-        print "RESPONSE"
+        resp = urllib2.urlopen(req, timeout=self.settings['TIMEOUT'])
         status = resp.getcode()
+
         if status == 200:
             return True
         elif status in Client.ERRORS:
@@ -129,6 +121,6 @@ class Client(object):
 
         env_em = etree.SubElement(notice_em, 'server-environment')
 
-        etree.SubElement(env_em, 'environment-name').text = settings.get('environment', 'development')
+        etree.SubElement(env_em, 'environment-name').text = getattr(settings, 'ENVIRONMENT', 'development')
 
         return '<?xml version="1.0" encoding="UTF-8"?>%s' % etree.tostring(notice_em)
