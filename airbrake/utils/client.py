@@ -103,8 +103,8 @@ class Client(object):
                     etree.SubElement(session_em, 'var', key=key).text(val)
 
             cgi_em = etree.SubElement(request_em, 'cgi-data')
-                for key, val in request.META.items():
-                    etree.SubElement(cgi_em, 'var', key=key).text(val)
+            for key, val in request.META.items():
+                etree.SubElement(cgi_em, 'var', key=key).text(val)
 
             # xml << ('environment-name', self.settings['ENVIRONMENT'])
 
