@@ -55,17 +55,9 @@ class Client(object):
 
     def _generate_xml(self, exception=None, request=None):
         _,_,trace = sys.exc_info()
-
         notice_em = etree.Element('notice', version='2.0')
 
-        tb_dict = {}
         tb = traceback.extract_tb(trace)
-
-        if tb:
-            tb = tb[0]
-            tb_dict['filename'] = tb[0]
-            tb_dict['line_number'] = tb[1]
-            tb_dict['function_name'] = tb[2]
 
         api_key = etree.SubElement(notice_em, 'api-key').text = self.settings['API_KEY']
 
@@ -114,10 +106,11 @@ class Client(object):
 
                 backtrace_em = etree.SubElement(error_em, 'backtrace')
 
-                etree.SubElement(backtrace_em, 'line',
-                    file=tb_dict.get('filename', 'unknown'),
-                    number=tb_dict.get('line_number', 'unknown'),
-                    method=tb_dict.get('function_name', 'unknown'))
+                for line in tb:
+                    etree.SubElement(backtrace_em, 'line',
+                        file=str(line[0]),
+                        number=str(line[1]),
+                        method=str(line[2]))
 
         env_em = etree.SubElement(notice_em, 'server-environment')
 
