@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.core.exceptions import MiddlewareNotUsed
 from airbrake.utils.client import Client
 
@@ -6,4 +7,5 @@ class AirbrakeNotifierMiddleware(object):
         self.client = Client()
 
     def process_exception(self, request, exception):
-        self.client.notify(exception=exception, request=request)
+        if not settings.DEBUG:
+            self.client.notify(exception=exception, request=request)
