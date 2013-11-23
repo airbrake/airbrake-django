@@ -93,7 +93,7 @@ class Client(object):
             session = request.session.items()
             if len(session):
                 session_em = etree.SubElement(request_em, 'session')
-                for key, val in session.items():
+                for key, val in session:
                     var = etree.SubElement(session_em, 'var')
                     var.set('key', str(key))
                     var.text = str(val)
