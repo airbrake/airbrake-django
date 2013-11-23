@@ -88,7 +88,7 @@ class Client(object):
                 for key, val in request.POST.items():
                     var = etree.SubElement(params_em, 'var')
                     var.set('key', str(key))
-                    var.text(str(val))
+                    var.text = str(val)
 
             session = request.session.items()
             if len(session):
@@ -96,7 +96,7 @@ class Client(object):
                 for key, val in session.items():
                     var = etree.SubElement(session_em, 'var')
                     var.set('key', str(key))
-                    var.text(str(val))
+                    var.text = str(val)
 
             if exception:
                 error_em = etree.SubElement(notice_em, 'error')
