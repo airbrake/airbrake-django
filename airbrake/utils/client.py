@@ -4,7 +4,6 @@ import sys
 import urllib2
 import traceback
 from lxml import etree
-from airbrake.utils.decorators import async
 
 
 class Client(object):
@@ -37,7 +36,6 @@ class Client(object):
         self._settings.update(getattr(settings, 'AIRBRAKE', {}))
         return self._settings
 
-    @async
     def notify(self, exception=None, request=None):
         headers = {
             'Content-Type': 'text/xml'
