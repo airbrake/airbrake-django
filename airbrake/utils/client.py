@@ -4,7 +4,6 @@ import sys
 import urllib2
 import traceback
 from lxml import etree
-from airbrake.utils.decorators import async
 
 
 class Client(object):
@@ -37,7 +36,6 @@ class Client(object):
         self._settings.update(getattr(settings, 'AIRBRAKE', {}))
         return self._settings
 
-    @async
     def notify(self, exception=None, request=None):
         headers = {
             'Content-Type': 'text/xml'
@@ -88,15 +86,15 @@ class Client(object):
                 for key, val in request.POST.items():
                     var = etree.SubElement(params_em, 'var')
                     var.set('key', str(key))
-                    var.text(str(val))
+                    var.text = str(val)
 
             session = request.session.items()
             if len(session):
                 session_em = etree.SubElement(request_em, 'session')
-                for key, val in session.items():
+                for key, val in session:
                     var = etree.SubElement(session_em, 'var')
                     var.set('key', str(key))
-                    var.text(str(val))
+                    var.text = str(val)
 
             if exception:
                 error_em = etree.SubElement(notice_em, 'error')

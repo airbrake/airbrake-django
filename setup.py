@@ -13,7 +13,7 @@ setup(
     license='BSD',
     packages=find_packages(),
     zip_safe=False,
-    install_requires=['decorator', 'djutils'],
+    install_requires=['decorator', 'lxml'],
     include_package_data=True,
     classifiers=[
         "Programming Language :: Python",
