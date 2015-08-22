@@ -1,17 +1,53 @@
-## Overview
+### Overview
 
 When I went to implement [Airbrake](http://airbrake.io) in [Sprint.ly](http://sprint.ly) I found two projects that looked like they might do the trick: [django-airbrake](https://bitbucket.org/greghball/django-airbrake), which was forked from the dormant [django-hoptoad](https://bitbucket.org/sjl/django-hoptoad/) and [Pytoad](https://github.com/attachmentsme/Pytoad) which wasn't made for Django. In the end, I decided to use bits and pieces of the two as the older `django-airbrake` wasn't working with the newer API and Pytoad didn't have any Django sugar.
 
-## Configuration
+### Install airbrake-django from github using pip
 
-In your `settings.py` file you're going to want to create a dictionary called `AIRBRAKE`. This dictionary will allow you to control how the Airbrake integration will work with your application.
+```sh
+pip install git+https://github.com/airbrake/airbrake-django.git
+```
 
-    AIRBRAKE = {
-        'API_KEY': 'your_api_key_here',
-        'USE_SSL': True,
-        'TIMEOUT': 5,
-        'ENVIRONMENT': 'unique_name_for_environment',
-    }
+### Configure airbrake in your settings.py
+To configure airbrake you will need to add airbrake to your `INSTALLED_APPS` and create the `AIRBRAKE` dictionary.
 
+Add `airbrake` to `INSTALLED_APPS` in your `settings.py`
+```python
+INSTALLED_APPS = (
+    'django.contrib.admin',
+    # ...
+    'airbrake'
+)
+```
 
-Once you've setup your Airbrake settings you just need to add `airbrake` to your `INSTALLED_APPS` and restart your server. If your code is as poorly written as mine, the errors will start flowing into Airbrake shortly.
+Create the `AIRBRAKE` dictionary in your settings.py for project:
+```python
+# Airbrake settings
+AIRBRAKE = {
+    'API_KEY': 'YOUR_PROJECT_API_KEY',
+    'USE_SSL': True,
+    'TIMEOUT': 5,
+    'ENVIRONMENT': 'production',
+}
+```
+
+Then just restart your server!
+
+### Manually sending errors to airbrake
+
+This example illustrates sending an error to Airbrake in a try catch.
+
+```python
+# hello.py
+from django.http import HttpResponse
+from airbrake.utils.client import Client
+
+def hello_errors(request):
+    try:
+        1/0
+    except Exception as error:
+        airbrake = Client()
+        airbrake.notify(error, request)
+
+    return HttpResponse("Hello Erorrs")
+```
