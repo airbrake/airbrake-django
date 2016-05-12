@@ -25,7 +25,12 @@ class Client(object):
         if self.settings['USE_SSL']:
             scheme = 'https'
 
-        return Client.API_URL % scheme
+        if self.settings['API_URL']:
+            url = self.settings['API_URL'] + '/notifier_api/v2/notices'
+        else:
+            url = Client.API_URL % scheme
+
+        return url
 
     @property
     def settings(self):
