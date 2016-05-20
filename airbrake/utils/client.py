@@ -117,6 +117,6 @@ class Client(object):
 
         env_em = etree.SubElement(notice_em, 'server-environment')
 
-        etree.SubElement(env_em, 'environment-name').text = getattr(settings, 'ENVIRONMENT', 'development')
+        etree.SubElement(env_em, 'environment-name').text = getattr(self.settings, 'ENVIRONMENT', 'development')
 
         return '<?xml version="1.0" encoding="UTF-8"?>%s' % etree.tostring(notice_em)
