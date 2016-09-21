@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.core.urlresolvers import resolve
 import sys
-import urllib2
+from six.moves import urllib
 import traceback
 from lxml import etree
 
@@ -22,10 +22,10 @@ class Client(object):
     @property
     def url(self):
         scheme = 'http'
-        if self.settings['USE_SSL']:
+        if self.settings.get('USE_SSL', False):
             scheme = 'https'
 
-        if self.settings['API_URL']:
+        if 'API_URL' in self.settings:
             url = self.settings['API_URL'] + '/notifier_api/v2/notices'
         else:
             url = Client.API_URL % scheme
@@ -47,8 +47,8 @@ class Client(object):
         }
 
         payload = self._generate_xml(exception=exception, request=request)
-        req = urllib2.Request(self.url, payload, headers)
-        resp = urllib2.urlopen(req, timeout=self.settings['TIMEOUT'])
+        req = urllib.request.Request(self.url, payload.encode('utf8'), headers)
+        resp = urllib.request.urlopen(req, timeout=self.settings['TIMEOUT'])
         status = resp.getcode()
 
         if status == 200:

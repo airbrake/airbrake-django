@@ -13,7 +13,7 @@ setup(
     license='BSD',
     packages=find_packages(),
     zip_safe=False,
-    install_requires=['decorator', 'lxml'],
+    install_requires=['decorator', 'lxml', 'six'],
     include_package_data=True,
     classifiers=[
         "Programming Language :: Python",

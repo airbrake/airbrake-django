@@ -8,5 +8,5 @@ Homepage: https://github.com/joestump/django-airbrake/
 
 Package: python-django-airbrake
 Architecture: all
-Depends: ${shlibs:Depends}, ${misc:Depends}, python (>= 2.5), python-django (>= 1.2.0), python-decorator
+Depends: ${shlibs:Depends}, ${misc:Depends}, python (>= 2.5), python-django (>= 1.2.0), python-decorator, six
 Description: Django application for integrating Airbrake.io into Django.
