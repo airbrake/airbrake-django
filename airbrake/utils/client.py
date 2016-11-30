@@ -16,7 +16,7 @@ class Client(object):
 
     DEFAULTS = {
         'TIMEOUT': 5,
-        'USE_SSL': False,
+        'USE_SSL': True,
     }
 
     @property
