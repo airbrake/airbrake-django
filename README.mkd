@@ -25,7 +25,6 @@ Create the `AIRBRAKE` dictionary in your settings.py for project:
 # Airbrake settings
 AIRBRAKE = {
     'API_KEY': 'YOUR_PROJECT_API_KEY',
-    'USE_SSL': True,
     'TIMEOUT': 5,
     'ENVIRONMENT': 'production',
 }
