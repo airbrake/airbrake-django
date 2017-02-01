@@ -22,7 +22,7 @@ class Client(object):
     @property
     def url(self):
         scheme = 'http'
-        if self.settings.get('USE_SSL', False):
+        if self.settings.get('USE_SSL', True):
             scheme = 'https'
 
         if 'API_URL' in self.settings:
