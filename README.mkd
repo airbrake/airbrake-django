@@ -32,6 +32,14 @@ AIRBRAKE = {
 
 Then just restart your server!
 
+### Automatically sending errors to airbrake
+```python
+MIDDLEWARE_CLASSES = (
+    ...,
+    'airbrake.middleware.AirbrakeNotifierMiddleware'
+)
+```
+
 ### Manually sending errors to airbrake
 
 This example illustrates sending an error to Airbrake in a try catch.
