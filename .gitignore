@@ -1,3 +1,4 @@
 *.pyc
 *.swp
 django_airbrake.egg-info
+.idea
