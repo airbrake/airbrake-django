@@ -1,6 +1,6 @@
 from django.conf import settings
 try:
-    # MiddlewareMixin is not available anymore in Django 1.8.7
+    # MiddlewareMixin is not available on older versions of Django
     from django.utils.deprecation import MiddlewareMixin
 except ImportError:
     MiddlewareMixin = object

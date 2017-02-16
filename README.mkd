@@ -33,6 +33,15 @@ AIRBRAKE = {
 Then just restart your server!
 
 ### Automatically sending errors to airbrake
+
+##### New-style (introduced in Django 1.10):
+```python
+MIDDLEWARE = (
+    ...,
+    'airbrake.middleware.AirbrakeNotifierMiddleware'
+)
+```
+##### Old-style:
 ```python
 MIDDLEWARE_CLASSES = (
     ...,
