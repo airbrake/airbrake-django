@@ -1,7 +1,11 @@
 from django.conf import settings
-from django.core.exceptions import MiddlewareNotUsed
-from django.utils.deprecation import MiddlewareMixin
+try:
+    # MiddlewareMixin is not available on older versions of Django
+    from django.utils.deprecation import MiddlewareMixin
+except ImportError:
+    MiddlewareMixin = object
 from airbrake.utils.client import Client
+
 
 class AirbrakeNotifierMiddleware(MiddlewareMixin):
     def __init__(self, *args, **kwargs):
