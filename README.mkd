@@ -1,3 +1,5 @@
+*Note*. Python 3.4+ users are strongly advised to try new [Airbrake Python notifier](https://github.com/airbrake/pybrake) which supports async API and code hunks. Python 2.7 users should continue to use this notifier.
+
 ### Overview
 
 When I went to implement [Airbrake](http://airbrake.io) in [Sprint.ly](http://sprint.ly) I found two projects that looked like they might do the trick: [django-airbrake](https://bitbucket.org/greghball/django-airbrake), which was forked from the dormant [django-hoptoad](https://bitbucket.org/sjl/django-hoptoad/) and [Pytoad](https://github.com/attachmentsme/Pytoad) which wasn't made for Django. In the end, I decided to use bits and pieces of the two as the older `django-airbrake` wasn't working with the newer API and Pytoad didn't have any Django sugar.
