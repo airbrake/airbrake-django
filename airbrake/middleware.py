@@ -14,5 +14,7 @@ class AirbrakeNotifierMiddleware(MiddlewareMixin):
         super(AirbrakeNotifierMiddleware, self).__init__(*args, **kwargs)
 
     def process_exception(self, request, exception):
-        if hasattr(settings, 'AIRBRAKE') and not settings.AIRBRAKE.get('DISABLE', False):
+        if (hasattr(settings, 'AIRBRAKE') and
+                not settings.AIRBRAKE.get('DISABLE', False) and
+                not isinstance(exception, settings.AIRBRAKE.get('FILTERED_EXCEPTIONS', tuple()))):
             self.client.notify(exception=exception, request=request)
