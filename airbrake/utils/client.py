@@ -1,7 +1,7 @@
 from django.conf import settings
 try:
     from django.core.urlresolvers import resolve
-except ImportError
+except ImportError:
     from django.urls import resolve
 import sys
 from six.moves import urllib
