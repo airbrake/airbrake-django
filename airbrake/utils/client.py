@@ -1,8 +1,11 @@
 from django.conf import settings
-try:
-    from django.core.urlresolvers import resolve
-except ImportError:
-    from django.urls import resolve
+from django import VERSION as DJANGO_VERSION
+
+if DJANGO_VERSION < (1, 11):
+    from django.core.urlresolvers import reverse, resolve
+else:
+    from django.urls import reverse, resolve
+
 import sys
 from six.moves import urllib
 import traceback
@@ -122,4 +125,4 @@ class Client(object):
 
         etree.SubElement(env_em, 'environment-name').text = self.settings.get('ENVIRONMENT', 'development')
 
-        return '<?xml version="1.0" encoding="UTF-8"?>%s' % etree.tostring(notice_em)
+        return '<?xml version="1.0" encoding="UTF-8"?>{}'.format(etree.tostring(notice_em, encoding="unicode"))
