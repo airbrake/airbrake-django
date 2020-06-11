@@ -29,6 +29,7 @@ AIRBRAKE = {
     'API_KEY': 'YOUR_PROJECT_API_KEY',
     'TIMEOUT': 5,
     'ENVIRONMENT': 'production',
+    'FILTERED_EXCEPTIONS': (Http404,)
 }
 ```
 

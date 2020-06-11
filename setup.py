@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='django-airbrake',
-    version='0.0.3',
+    version='0.0.4',
     description='A Django app for submitting exceptions to Airbrake.io.',
     long_description='',
     keywords='django, airbrake',
